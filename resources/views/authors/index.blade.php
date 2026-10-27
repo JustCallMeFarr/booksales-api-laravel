@@ -18,11 +18,11 @@
         <tbody>
             @foreach ($authors as $author)
                 <tr>
-                    <td>{{ $author['id'] }}</td>
-                    <td>{{ $author['name'] }}</td>
-                    <td>{{ $author['photo'] }}</td>
-                    <td>{{ $author['bio'] }}</td>
-                    <td><a href="{{ route('authors.show', $author['id']) }}">Detail</a></td>
+                    <td>{{ $author->id }}</td>
+                    <td>{{ $author->name }}</td>
+                    <td>{{ $author->photo }}</td>
+                    <td>{{ $author->bio }}</td>
+                    <td><a href="{{ route('authors.show', $author->id) }}">Detail</a></td>
                 </tr>
             @endforeach
         </tbody>

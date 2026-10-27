@@ -6,9 +6,6 @@ use App\Models\Author;
 
 class AuthorController extends Controller
 {
-    /**
-     * Tampilkan daftar semua penulis.
-     */
     public function index()
     {
         $authors = Author::all();
@@ -16,16 +13,9 @@ class AuthorController extends Controller
         return view('authors.index', compact('authors'));
     }
 
-    /**
-     * Tampilkan detail satu penulis.
-     */
     public function show(int $id)
     {
-        $author = Author::find($id);
-
-        if ($author === null) {
-            abort(404, 'Penulis tidak ditemukan');
-        }
+        $author = Author::with('books')->findOrFail($id);
 
         return view('authors.show', compact('author'));
     }

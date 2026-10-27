@@ -2,59 +2,17 @@
 
 namespace App\Models;
 
-class Genre
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
+class Genre extends Model
 {
-    /**
-     * Data genre (array) sesuai tabel genres pada desain database:
-     * id, name, description
-     */
-    private static array $genres = [
-        [
-            'id' => 1,
-            'name' => 'Fiksi',
-            'description' => 'Buku cerita rekaan seperti novel dan cerpen yang bersumber dari imajinasi penulis.',
-        ],
-        [
-            'id' => 2,
-            'name' => 'Non-Fiksi',
-            'description' => 'Buku berbasis fakta dan peristiwa nyata, seperti biografi dan buku pengetahuan.',
-        ],
-        [
-            'id' => 3,
-            'name' => 'Teknologi',
-            'description' => 'Buku seputar pemrograman, jaringan, basis data, dan perkembangan teknologi informasi.',
-        ],
-        [
-            'id' => 4,
-            'name' => 'Sejarah',
-            'description' => 'Buku yang mengulas peristiwa, tokoh, dan peradaban pada masa lampau.',
-        ],
-        [
-            'id' => 5,
-            'name' => 'Pengembangan Diri',
-            'description' => 'Buku motivasi dan panduan untuk meningkatkan kualitas diri dan kebiasaan positif.',
-        ],
-    ];
+    public $timestamps = false;
 
-    /**
-     * Ambil semua data genre.
-     */
-    public static function all(): array
+    protected $fillable = ['name', 'description'];
+
+    public function books(): HasMany
     {
-        return self::$genres;
-    }
-
-    /**
-     * Cari satu genre berdasarkan id. Mengembalikan null jika tidak ditemukan.
-     */
-    public static function find(int $id): ?array
-    {
-        foreach (self::$genres as $genre) {
-            if ($genre['id'] === $id) {
-                return $genre;
-            }
-        }
-
-        return null;
+        return $this->hasMany(Book::class);
     }
 }

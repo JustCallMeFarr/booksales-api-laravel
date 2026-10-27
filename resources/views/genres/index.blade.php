@@ -17,10 +17,10 @@
         <tbody>
             @foreach ($genres as $genre)
                 <tr>
-                    <td>{{ $genre['id'] }}</td>
-                    <td>{{ $genre['name'] }}</td>
-                    <td>{{ $genre['description'] }}</td>
-                    <td><a href="{{ route('genres.show', $genre['id']) }}">Detail</a></td>
+                    <td>{{ $genre->id }}</td>
+                    <td>{{ $genre->name }}</td>
+                    <td>{{ $genre->description }}</td>
+                    <td><a href="{{ route('genres.show', $genre->id) }}">Detail</a></td>
                 </tr>
             @endforeach
         </tbody>
