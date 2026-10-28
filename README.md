@@ -1,38 +1,58 @@
-# Book Sales API - Tugas MVC Genre & Author
+# Book Sales API - Tugas API Laravel
 
-Branch: `tugasLaravel1-mvc-genre-author`
+Branch: `tugasLaravel3-api`
 
-Tugas membuat sistem MVC sederhana pada Laravel untuk menampilkan data array dari Model melalui View. Studi kasus yang dipakai adalah tabel **Genre** dan **Author** dari dokumen Brief *Sistem Informasi Penjualan Buku* (NF Academy).
+REST API sederhana untuk sistem informasi penjualan buku (NF Academy) menggunakan Laravel. Semua routing berada di `routes/api.php`, controller mengembalikan output JSON, dan file view yang tidak diperlukan sudah dihapus.
 
 ## Tujuan
 
-- Memahami alur MVC (Model, View, Controller) beserta routing pada Laravel.
-- Menampilkan data dari Model (berupa array) ke halaman web melalui Controller dan View.
+- Memahami konsep API pada Laravel (`routes/api.php`).
+- Menampilkan data dari database dalam format JSON melalui Controller.
+- Menguji endpoint menggunakan alat uji API.
 
-## Struktur MVC
+## Struktur
 
 | Komponen   | Lokasi |
 |------------|--------|
-| Model      | `app/Models/Genre.php`, `app/Models/Author.php` |
-| Controller | `app/Http/Controllers/GenreController.php`, `app/Http/Controllers/AuthorController.php` |
-| Routing    | `routes/web.php` |
-| View       | `resources/views/layouts/app.blade.php`, `resources/views/genres/`, `resources/views/authors/` |
+| Routing    | `routes/api.php` |
+| Controller | `app/Http/Controllers/BookController.php`, `AuthorController.php`, `GenreController.php` |
+| Model      | `app/Models/Book.php`, `Author.php`, `Genre.php` |
+| Migration  | `database/migrations/` (genres, authors, books) |
+| Seeder     | `database/seeders/` (GenreSeeder, AuthorSeeder, BookSeeder) |
 
-## Data
+## Daftar Endpoint
 
-Setiap Model berisi 5 data array yang mengikuti kolom pada desain database di Brief.
+Semua endpoint diawali `/api` dan memakai method `GET`.
 
-- **Genre**: `id`, `name`, `description`
-- **Author**: `id`, `name`, `photo`, `bio`
+| URL | Keterangan |
+|-----|------------|
+| `/api/books` | Daftar buku beserta genre dan penulisnya |
+| `/api/books/{id}` | Detail satu buku |
+| `/api/authors` | Daftar penulis |
+| `/api/authors/{id}` | Detail satu penulis beserta bukunya |
+| `/api/genres` | Daftar genre |
+| `/api/genres/{id}` | Detail satu genre beserta bukunya |
 
-## Daftar Route
+## Format Response
 
-| Method | URL             | Controller@method        | Keterangan          |
-|--------|-----------------|--------------------------|---------------------|
-| GET    | `/genres`       | `GenreController@index`  | Daftar semua genre  |
-| GET    | `/genres/{id}`  | `GenreController@show`   | Detail satu genre   |
-| GET    | `/authors`      | `AuthorController@index` | Daftar semua author |
-| GET    | `/authors/{id}` | `AuthorController@show`  | Detail satu author  |
+Berhasil (`200 OK`):
+
+```json
+{
+  "success": true,
+  "message": "Detail data buku",
+  "data": { }
+}
+```
+
+Data tidak ditemukan (`404 Not Found`):
+
+```json
+{
+  "success": false,
+  "message": "Buku tidak ditemukan"
+}
+```
 
 ## Cara Menjalankan
 
@@ -40,7 +60,7 @@ Setiap Model berisi 5 data array yang mengikuti kolom pada desain database di Br
    ```bash
    git clone https://github.com/JustCallMeFarr/booksales-api-laravel.git
    cd booksales-api-laravel
-   git checkout tugasLaravel1-mvc-genre-author
+   git checkout tugasLaravel3-api
    ```
 2. Pasang dependensi dan siapkan environment:
    ```bash
@@ -48,17 +68,21 @@ Setiap Model berisi 5 data array yang mengikuti kolom pada desain database di Br
    cp .env.example .env
    php artisan key:generate
    ```
-3. Jalankan server:
+3. Atur koneksi database pada file `.env`, lalu jalankan migration dan seeder:
+   ```bash
+   php artisan migrate:fresh --seed
+   ```
+4. Jalankan server:
    ```bash
    php artisan serve
    ```
-4. Buka di browser:
-   - http://127.0.0.1:8000/genres
-   - http://127.0.0.1:8000/authors
-
-Tugas ini tidak memakai database, jadi tidak perlu menjalankan migrasi.
+5. Uji endpoint lewat Postman, browser, atau `curl`:
+   ```bash
+   curl http://127.0.0.1:8000/api/books
+   ```
 
 ## Teknologi
 
 - PHP dan Laravel
-- Blade template engine
+- MySQL / SQLite
+- Postman atau `curl` untuk pengujian
