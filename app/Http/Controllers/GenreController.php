@@ -3,20 +3,42 @@
 namespace App\Http\Controllers;
 
 use App\Models\Genre;
+use Illuminate\Http\JsonResponse;
 
 class GenreController extends Controller
 {
-    public function index()
+    /**
+     * GET /api/genres - daftar semua genre.
+     */
+    public function index(): JsonResponse
     {
         $genres = Genre::all();
 
-        return view('genres.index', compact('genres'));
+        return response()->json([
+            'success' => true,
+            'message' => 'Daftar data genre',
+            'data' => $genres,
+        ]);
     }
 
-    public function show(int $id)
+    /**
+     * GET /api/genres/{id} - detail satu genre beserta bukunya.
+     */
+    public function show(int $id): JsonResponse
     {
-        $genre = Genre::with('books')->findOrFail($id);
+        $genre = Genre::with('books')->find($id);
 
-        return view('genres.show', compact('genre'));
+        if ($genre === null) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Genre tidak ditemukan',
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Detail data genre',
+            'data' => $genre,
+        ]);
     }
 }
