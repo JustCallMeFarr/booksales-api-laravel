@@ -14,7 +14,9 @@ Route::get('/books/{id}', [BookController::class, 'show'])->whereNumber('id');
 // Author
 Route::get('/authors', [AuthorController::class, 'index']);
 Route::get('/authors/{id}', [AuthorController::class, 'show'])->whereNumber('id');
+Route::post('/authors', [AuthorController::class, 'store']);
 
 // Genre
 Route::get('/genres', [GenreController::class, 'index']);
 Route::get('/genres/{id}', [GenreController::class, 'show'])->whereNumber('id');
+Route::post('/genres', [GenreController::class, 'store']);
