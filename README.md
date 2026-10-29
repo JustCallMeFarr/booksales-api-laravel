@@ -1,38 +1,111 @@
-# Book Sales API - Tugas MVC Genre & Author
+# Book Sales API - Tugas Fitur Create (Genre & Author)
 
-Branch: `tugasLaravel1-mvc-genre-author`
+Branch: `tugasLaravel4-create`
 
-Tugas membuat sistem MVC sederhana pada Laravel untuk menampilkan data array dari Model melalui View. Studi kasus yang dipakai adalah tabel **Genre** dan **Author** dari dokumen Brief *Sistem Informasi Penjualan Buku* (NF Academy).
+REST API sederhana untuk sistem informasi penjualan buku (NF Academy) menggunakan Laravel. Pada tugas ini ditambahkan fitur **Create** (menambah data baru) untuk tabel **Genre** dan **Author**, di samping fitur **Read** yang sudah ada.
 
 ## Tujuan
 
-- Memahami alur MVC (Model, View, Controller) beserta routing pada Laravel.
-- Menampilkan data dari Model (berupa array) ke halaman web melalui Controller dan View.
+- Membuat fitur Read all dan Create pada tabel Genre dan Author.
+- Memvalidasi data yang dikirim sebelum disimpan ke database.
+- Menguji endpoint menggunakan Postman.
 
-## Struktur MVC
+## Struktur
 
 | Komponen   | Lokasi |
 |------------|--------|
-| Model      | `app/Models/Genre.php`, `app/Models/Author.php` |
-| Controller | `app/Http/Controllers/GenreController.php`, `app/Http/Controllers/AuthorController.php` |
-| Routing    | `routes/web.php` |
-| View       | `resources/views/layouts/app.blade.php`, `resources/views/genres/`, `resources/views/authors/` |
+| Routing    | `routes/api.php` |
+| Controller | `app/Http/Controllers/GenreController.php`, `AuthorController.php`, `BookController.php` |
+| Model      | `app/Models/Genre.php`, `Author.php`, `Book.php` |
+| Migration  | `database/migrations/` (genres, authors, books) |
+| Seeder     | `database/seeders/` (GenreSeeder, AuthorSeeder, BookSeeder) |
 
-## Data
+## Daftar Endpoint
 
-Setiap Model berisi 5 data array yang mengikuti kolom pada desain database di Brief.
+Semua endpoint diawali `/api`.
 
-- **Genre**: `id`, `name`, `description`
-- **Author**: `id`, `name`, `photo`, `bio`
+| Method | URL | Keterangan |
+|--------|-----|------------|
+| GET    | `/api/genres` | Daftar semua genre (Read all) |
+| GET    | `/api/genres/{id}` | Detail satu genre beserta bukunya |
+| POST   | `/api/genres` | Tambah genre baru (Create) |
+| GET    | `/api/authors` | Daftar semua penulis (Read all) |
+| GET    | `/api/authors/{id}` | Detail satu penulis beserta bukunya |
+| POST   | `/api/authors` | Tambah penulis baru (Create) |
+| GET    | `/api/books` | Daftar buku beserta genre dan penulisnya |
+| GET    | `/api/books/{id}` | Detail satu buku |
 
-## Daftar Route
+## Contoh Request Create
 
-| Method | URL             | Controller@method        | Keterangan          |
-|--------|-----------------|--------------------------|---------------------|
-| GET    | `/genres`       | `GenreController@index`  | Daftar semua genre  |
-| GET    | `/genres/{id}`  | `GenreController@show`   | Detail satu genre   |
-| GET    | `/authors`      | `AuthorController@index` | Daftar semua author |
-| GET    | `/authors/{id}` | `AuthorController@show`  | Detail satu author  |
+Kirim dengan body bertipe JSON. Di Postman: pilih **Body**, **raw**, lalu **JSON**.
+
+**POST `/api/genres`**
+
+| Field | Aturan |
+|-------|--------|
+| `name` | wajib, teks, maksimal 255 karakter |
+| `description` | wajib, teks |
+
+```json
+{
+  "name": "Komik",
+  "description": "Buku cerita bergambar dengan alur bersambung."
+}
+```
+
+**POST `/api/authors`**
+
+| Field | Aturan |
+|-------|--------|
+| `name` | wajib, teks, maksimal 255 karakter |
+| `photo` | opsional, teks (nama file), maksimal 255 karakter |
+| `bio` | wajib, teks |
+
+```json
+{
+  "name": "Eka Kurniawan",
+  "photo": "eka-kurniawan.jpg",
+  "bio": "Novelis Indonesia penulis Cantik Itu Luka."
+}
+```
+
+## Format Response
+
+Berhasil dibuat (`201 Created`):
+
+```json
+{
+  "success": true,
+  "message": "Genre berhasil ditambahkan",
+  "data": {
+    "name": "Komik",
+    "description": "Buku cerita bergambar dengan alur bersambung.",
+    "id": 6
+  }
+}
+```
+
+Validasi gagal (`422 Unprocessable Content`):
+
+```json
+{
+  "success": false,
+  "message": "Validasi gagal",
+  "errors": {
+    "name": ["The name field is required."],
+    "description": ["The description field is required."]
+  }
+}
+```
+
+Data tidak ditemukan (`404 Not Found`):
+
+```json
+{
+  "success": false,
+  "message": "Genre tidak ditemukan"
+}
+```
 
 ## Cara Menjalankan
 
@@ -40,7 +113,7 @@ Setiap Model berisi 5 data array yang mengikuti kolom pada desain database di Br
    ```bash
    git clone https://github.com/JustCallMeFarr/booksales-api-laravel.git
    cd booksales-api-laravel
-   git checkout tugasLaravel1-mvc-genre-author
+   git checkout tugasLaravel4-create
    ```
 2. Pasang dependensi dan siapkan environment:
    ```bash
@@ -48,17 +121,24 @@ Setiap Model berisi 5 data array yang mengikuti kolom pada desain database di Br
    cp .env.example .env
    php artisan key:generate
    ```
-3. Jalankan server:
+3. Atur koneksi database pada file `.env`, lalu jalankan migration dan seeder:
+   ```bash
+   php artisan migrate:fresh --seed
+   ```
+4. Jalankan server:
    ```bash
    php artisan serve
    ```
-4. Buka di browser:
-   - http://127.0.0.1:8000/genres
-   - http://127.0.0.1:8000/authors
-
-Tugas ini tidak memakai database, jadi tidak perlu menjalankan migrasi.
+5. Uji endpoint lewat Postman, atau `curl`:
+   ```bash
+   curl -X POST http://127.0.0.1:8000/api/genres \
+     -H "Content-Type: application/json" \
+     -H "Accept: application/json" \
+     -d '{"name":"Komik","description":"Buku cerita bergambar."}'
+   ```
 
 ## Teknologi
 
 - PHP dan Laravel
-- Blade template engine
+- MySQL / SQLite
+- Postman untuk pengujian
