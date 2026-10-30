@@ -7,16 +7,11 @@ use Illuminate\Support\Facades\Route;
 
 // Semua route di file ini otomatis diawali /api (contoh: /api/books)
 
-// Book
-Route::get('/books', [BookController::class, 'index']);
-Route::get('/books/{id}', [BookController::class, 'show'])->whereNumber('id');
+// Book (baru Read: index dan show)
+Route::apiResource('books', BookController::class)->only(['index', 'show']);
 
-// Author
-Route::get('/authors', [AuthorController::class, 'index']);
-Route::get('/authors/{id}', [AuthorController::class, 'show'])->whereNumber('id');
-Route::post('/authors', [AuthorController::class, 'store']);
+// Genre: index, store, show, update, destroy
+Route::apiResource('genres', GenreController::class);
 
-// Genre
-Route::get('/genres', [GenreController::class, 'index']);
-Route::get('/genres/{id}', [GenreController::class, 'show'])->whereNumber('id');
-Route::post('/genres', [GenreController::class, 'store']);
+// Author: index, store, show, update, destroy
+Route::apiResource('authors', AuthorController::class);
