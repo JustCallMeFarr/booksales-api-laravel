@@ -10,6 +10,7 @@ class DatabaseSeeder extends Seeder
     {
         // Urutan penting: genres & authors dulu, baru books (karena foreign key)
         $this->call([
+            UserSeeder::class,
             GenreSeeder::class,
             AuthorSeeder::class,
             BookSeeder::class,
